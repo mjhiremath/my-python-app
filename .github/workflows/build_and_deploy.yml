@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.create_tag.outputs.image_tag}}
     steps:
