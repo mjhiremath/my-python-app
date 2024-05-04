@@ -1,0 +1,10 @@
+fileignoreconfig:
+- filename: .github/workflows/build_and_deploy.yml
+  checksum: ce3fa0843aa6565d43e3badbe472bd3fcdb6aa3a62e2fe721112243fd19f9804
+- filename: my-python-app/values.yaml
+  checksum: 335f18cd928677fb9538720dd084094c66a5315ab3f7eeeee934c975c9ecdd8a
+- filename: test_app.py
+  checksum: a3b6e946c91a2b227d35626a1207f4583509819ba19c9170edf5a1a308f6089d
+- filename: my-python-app/templates/ingress.yaml
+  checksum: f26127b759166e36f4e41090b5b999c33b44bf47e038aa48b57a9fe21a132e9e
+version: ""
