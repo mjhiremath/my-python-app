@@ -3,56 +3,67 @@ on:
  push:
    branches:
      - main
+
+
 jobs:
   build:
     name: build
     runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.create_tag.outputs.image_tag}}
+#    outputs:
+#      image_tag: ${{ steps.create_tag.outputs.image_tag}}
     steps:
-      - name: code checkout
-        uses: actions/checkout@v2
-
-      - name: generate github tag
-        id: create_tag
-        run: echo "::set-output name=image_tag::$(echo $GITHUB_SHA)"
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: build the image
-        run:
-          docker build -t mjhiremath776/github_image:${{ steps.create_tag.outputs.image_tag}} .
-
-      - name: push the image
-        run: docker push mjhiremath776/github_image:${{ steps.create_tag.outputs.image_tag}}
-
-  deploy:
-    name: deploy
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - name: code checkout
-        uses: actions/checkout@v2
-      
-      - name: create docker registry secret for k8
+          python-version: '3.12'
+      - name: Install dependencies
         run: |
-         kubectl create secret docker-registry my-python-app \
-          --docker-server=https://index.docker.io/v2/ \
-          --docker-username=${{ secrets.DOCKERHUB_USERNAME }} \
-          --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
-          --docker-email=mjhiremath776@gmail.com \
-          --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: deploy to kubernetes
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
         run: |
-          helm upgrade --install my-python-app my-python-app \
-          --set image.repository=mjhiremath776/test_image \
-          --set image.tag=${{ needs.build.outputs.image_tag}} \
-          --set 'imagePullSecrets[0].name=my-python-app'
-
-          
+          pytest -V
+#      - name: generate github tag
+#        id: create_tag
+#        run: echo "::set-output name=image_tag::$(echo $GITHUB_SHA)"
+#
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: build the image
+#        run:
+#          docker build -t mjhiremath776/github_image:${{ steps.create_tag.outputs.image_tag}} .
+#
+#      - name: push the image
+#        run: docker push mjhiremath776/github_image:${{ steps.create_tag.outputs.image_tag}}
+#
+#  deploy:
+#    name: deploy
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: code checkout
+#        uses: actions/checkout@v2
+#
+#      - name: create docker registry secret for k8
+#        run: |
+#         kubectl create secret docker-registry my-python-app \
+#          --docker-server=https://index.docker.io/v2/ \
+#          --docker-username=${{ secrets.DOCKERHUB_USERNAME }} \
+#          --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
+#          --docker-email=mjhiremath776@gmail.com \
+#          --dry-run=client -o yaml | kubectl apply -f -
+#
+#      - name: deploy to kubernetes
+#        run: |
+#          helm upgrade --install my-python-app my-python-app \
+#          --set image.repository=mjhiremath776/test_image \
+#          --set image.tag=${{ needs.build.outputs.image_tag}} \
+#          --set 'imagePullSecrets[0].name=my-python-app'
+#
+#
         

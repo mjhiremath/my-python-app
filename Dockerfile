@@ -6,10 +6,11 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Run the tests
-RUN pytest
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pytest
+#
+# # Run the tests
+# RUN pytest
 
 # Expose port for the application
 EXPOSE 8080

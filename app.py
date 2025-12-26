@@ -4,8 +4,6 @@ import requests
 app = Flask(__name__)
 
 @app.route('/')
-@app.route('/home')
-@app.route('/home/')
 def homepage():
     return 'This app is used to get gists of any Github User, to get info about any user use /gists/username path in url', 200
 
@@ -25,9 +23,9 @@ def get_user_gists(username):
       #gists = response.json()
       #return jsonify(gists)
 
-#@app.route('/<path:invalid_path>')
-#def handle_invalid_path(invalid_path):
-#    return 'Invalid path. Please use /gists/username path in URL.', 404
+@app.route('/<path:invalid_path>')
+def handle_invalid_path(invalid_path):
+   return 'Invalid path. Please use /gists/username path in URL.', 404
 
 if __name__ == '__main__':
     app.run(debug=True,  host='0.0.0.0', port=8080)
